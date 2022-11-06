@@ -21,6 +21,8 @@ public:
 	// destructor
 	~Array() noexcept { delete[] moptrData; }
 
+	inline size_t Size() const { return mSize; }
+
 	//access operators
 	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
@@ -41,14 +43,14 @@ private:
 template<typename Type>
 inline const Type Array<Type>::operator[](size_t index) const
 {
-	std::assert(mSize < index);
+	assert(index < mSize);
 	if (mSize < index) { return moptrData[index]; }
 }
 
 template<typename Type>
 inline Type& Array<Type>::operator[](size_t index)
 {
-	std::assert(mSize < index);
+	assert(index < mSize);
 	if (mSize < index) { return moptrData[index]; }
 }
 
@@ -63,7 +65,7 @@ inline void Array<Type>::Append(Type item)
 template<typename Type>
 inline void Array<Type>::Pop()
 {
-	if (mSize < mCapacity / 4) { Resize(mCapacity / 2); }
+	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
 	mSize--;
 }
 
@@ -80,4 +82,5 @@ inline void Array<Type>::Resize(size_t newCapacity)
 	delete[] moptrData;
 	moptrData = mnoptrNewData;
 	mCapacity = newCapacity;
+	mnoptrNewData = nullptr;
 }
