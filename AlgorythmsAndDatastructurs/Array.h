@@ -15,8 +15,8 @@ class Array
 {
 public:
 	// constructors
-	constexpr Array() noexcept : mSize(0), mCapacity(1), moptrData(new Type[mCapacity]) {}
-	constexpr Array(size_t capacity) noexcept : mSize(0), mCapacity(capacity), moptrData(new Type[mCapacity]) {}
+	Array() noexcept : mSize(0), mCapacity(1), moptrData(new Type) {}
+	Array(size_t capacity) noexcept : mSize(0), mCapacity(capacity), moptrData(new Type[mCapacity]) {}
 
 	// destructor
 	~Array() noexcept { delete[] moptrData; }
@@ -29,7 +29,7 @@ public:
 
 	// simple push and pop fuctions
 	void Append(Type item);
-	void Pop();
+	Type Pop();
 private:
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
@@ -63,10 +63,11 @@ inline void Array<Type>::Append(Type item)
 }
 
 template<typename Type>
-inline void Array<Type>::Pop()
+inline Type Array<Type>::Pop()
 {
 	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
 	mSize--;
+	return moptrData[mSize];
 }
 
 template<typename Type>
