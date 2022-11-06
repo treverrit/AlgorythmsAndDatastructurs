@@ -8,6 +8,8 @@
 // Description : A resizable array template
 //============================================================================
 
+#include <cassert>
+
 template<typename Type>
 class Array
 {
@@ -18,6 +20,10 @@ public:
 
 	// destructor
 	~Array() noexcept { delete[] moptrData; }
+
+	//access operators
+	const Type operator [] (size_t index) const;
+	Type& operator [] (size_t index);
 
 	// simple push and pop fuctions
 	void Append(Type item);
@@ -31,6 +37,20 @@ private:
 	size_t mCapacity;
 	Type* moptrData;
 };
+
+template<typename Type>
+inline const Type Array<Type>::operator[](size_t index) const
+{
+	std::assert(mSize < index);
+	if (mSize < index) { return moptrData[index]; }
+}
+
+template<typename Type>
+inline Type& Array<Type>::operator[](size_t index)
+{
+	std::assert(mSize < index);
+	if (mSize < index) { return moptrData[index]; }
+}
 
 template<typename Type>
 inline void Array<Type>::Append(Type item)
