@@ -19,11 +19,12 @@ public:
 	Array(size_t capacity) noexcept : mSize(0), mCapacity(capacity), moptrData(new Type[mCapacity]) {}
 
 	// destructor
-	~Array() noexcept { delete[] moptrData; }
+	~Array() noexcept { delete[] moptrData; moptrData = nullptr; }
 
 	inline size_t Size() const { return mSize; }
 
 	//access operators
+	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
 
 	// simple push and pop fuctions
@@ -43,20 +44,29 @@ template<typename Type>
 inline const Type Array<Type>::operator[](size_t index) const
 {
 	assert(index < mSize);
-	if (mSize < index) { return moptrData[index]; }
+	if (index < mSize)
+	{
+		return moptrData[index];
+	}
 }
 
 template<typename Type>
 inline Type& Array<Type>::operator[](size_t index)
 {
 	assert(index < mSize);
-	if (mSize < index) { return moptrData[index]; }
+	if (index < mSize) 
+	{ 
+		return moptrData[index]; 
+	}
 }
 
 template<typename Type>
 inline void Array<Type>::Append(Type item)
 {
-	if (mSize == mCapacity) { Resize(mCapacity * 2); }
+	if (mSize == mCapacity) 
+	{ 
+		Resize(mCapacity * 2); 
+	}
 	moptrData[mSize] = item;
 	mSize++;
 }
@@ -64,7 +74,10 @@ inline void Array<Type>::Append(Type item)
 template<typename Type>
 inline Type Array<Type>::Pop()
 {
-	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
+	if (mSize < (mCapacity / 4)) 
+	{ 
+		Resize(mCapacity / 2); 
+	}
 	mSize--;
 	return moptrData[mSize];
 }
@@ -82,5 +95,4 @@ inline void Array<Type>::Resize(size_t newCapacity)
 	delete[] moptrData;
 	moptrData = mnoptrNewData;
 	mCapacity = newCapacity;
-	mnoptrNewData = nullptr;
 }
