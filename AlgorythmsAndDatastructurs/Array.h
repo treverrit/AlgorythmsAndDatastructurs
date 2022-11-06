@@ -24,7 +24,6 @@ public:
 	inline size_t Size() const { return mSize; }
 
 	//access operators
-	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
 
 	// simple push and pop fuctions
