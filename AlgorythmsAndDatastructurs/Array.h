@@ -91,7 +91,7 @@ inline void Array<Type>::Insert(Type item, size_t place)
 {
 	if (mSize == mCapacity)
 	{
-		Resize(mCapacity * 2)
+		Resize(mCapacity * 2);
 	}
 
 	for (size_t index = mSize; index > place; index--)

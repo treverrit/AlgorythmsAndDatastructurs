@@ -11,12 +11,29 @@ int main()
 		intArray.Append(static_cast<int>(index + 1));
 		std::cout << intArray[index] << " "; 
 	}
-
+	std::cout << "\n";
 	std::cout << "\n" << intArray.Pop() << "\n";
 
 	for (size_t index = 0; index < intArray.Size(); index++)
 	{
 		std::cout << intArray[index] << " ";
 	}
+
+	std::cout << "\n";
+	intArray.Insert(11, 11);
+
+	for (size_t index = 0; index < intArray.Size(); index++)
+	{
+		std::cout << intArray[index] << " ";
+	}
+
+	std::cout << "\n";
+	intArray.Remove(14);
+
+	for (size_t index = 0; index < intArray.Size(); index++)
+	{
+		std::cout << intArray[index] << " ";
+	}
+
 	return 0;
 }
