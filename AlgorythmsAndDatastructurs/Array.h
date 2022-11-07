@@ -47,7 +47,7 @@ private:
 template<typename Type>
 inline const Type Array<Type>::operator[](size_t index) const
 {
-	assert(index < mSize);
+	assert(index < mSize); 
 	if (index < mSize)
 	{
 		return moptrData[index];
@@ -67,6 +67,7 @@ inline Type& Array<Type>::operator[](size_t index)
 template<typename Type>
 inline void Array<Type>::Append(Type item)
 {
+	// if the array is full make the array bigger
 	if (mSize == mCapacity) 
 	{ 
 		Resize(mCapacity * 2); 
@@ -78,6 +79,7 @@ inline void Array<Type>::Append(Type item)
 template<typename Type>
 inline Type Array<Type>::Pop()
 {
+	// if the size is to small make the array smaller
 	if (mSize < (mCapacity / 4)) 
 	{ 
 		Resize(mCapacity / 2); 
@@ -89,6 +91,7 @@ inline Type Array<Type>::Pop()
 template<typename Type>
 inline void Array<Type>::Insert(Type item, size_t place)
 {
+	// if the array is full make the array bigger
 	if (mSize == mCapacity)
 	{
 		Resize(mCapacity * 2);
@@ -96,7 +99,7 @@ inline void Array<Type>::Insert(Type item, size_t place)
 
 	for (size_t index = mSize; index > place; index--)
 	{
-		moptrData[index] = moptrData[index - 1];
+		moptrData[index] = moptrData[index - 1]; // shift the data after the place where the new item should be inserted once further
 	}
 
 	moptrData[place] = item;
@@ -106,7 +109,8 @@ inline void Array<Type>::Insert(Type item, size_t place)
 template<typename Type>
 inline Type Array<Type>::Remove(size_t place)
 {
-	if (mSize < (mCapacity / 4))
+	// if the size is to small make the array smaller
+	if (mSize < (mCapacity / 4)) 
 	{
 		Resize(mCapacity / 2);
 	}
@@ -115,7 +119,7 @@ inline Type Array<Type>::Remove(size_t place)
 
 	for (size_t index = place; index < mSize - 1; index++)
 	{
-		moptrData[index] = moptrData[index + 1];
+		moptrData[index] = moptrData[index + 1]; // shift the data after the removed item once back
 	}
 
 	mSize--;
@@ -126,14 +130,15 @@ inline Type Array<Type>::Remove(size_t place)
 template<typename Type>
 inline void Array<Type>::Resize(size_t newCapacity)
 {
-	Type* mnoptrNewData = new Type[newCapacity];
+	Type* noptrNewData = new Type[newCapacity]; // make a new array
 
 	for (size_t index = 0; index < mSize; index++)
 	{
-		mnoptrNewData[index] = moptrData[index];
+		noptrNewData[index] = moptrData[index]; // copy the data
 	}
 
+	// give the data the member type pointer  
 	delete[] moptrData;
-	moptrData = mnoptrNewData;
+	moptrData = noptrNewData;
 	mCapacity = newCapacity;
 }
