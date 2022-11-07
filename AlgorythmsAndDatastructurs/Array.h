@@ -5,7 +5,7 @@
 // Author      : Gerrit Flick
 // Version     : 1.0
 // Copyright   : 
-// Description : A resizable array template
+// Description : A resizable dynamic array template
 //============================================================================
 
 #include <cassert>
@@ -23,13 +23,17 @@ public:
 
 	inline size_t Size() const { return mSize; }
 
-	//access operators
+	// access operators
 	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
 
 	// simple push and pop fuctions
 	void Append(Type item);
 	Type Pop();
+
+	// functions to remove or insert items from everywere
+	void Insert(Type item, size_t place);
+	Type Remove(size_t place);
 private:
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
@@ -80,6 +84,43 @@ inline Type Array<Type>::Pop()
 	}
 	mSize--;
 	return moptrData[mSize];
+}
+
+template<typename Type>
+inline void Array<Type>::Insert(Type item, size_t place)
+{
+	if (mSize == mCapacity)
+	{
+		Resize(mCapacity * 2)
+	}
+
+	for (size_t index = mSize; index > place; index--)
+	{
+		moptrData[index] = moptrData[index - 1];
+	}
+
+	moptrData[place] = item;
+	mSize++;
+}
+
+template<typename Type>
+inline Type Array<Type>::Remove(size_t place)
+{
+	if (mSize < (mCapacity / 4))
+	{
+		Resize(mCapacity / 2);
+	}
+
+	Type item = moptrData[place];
+
+	for (size_t index = place; index < mSize - 1; index++)
+	{
+		moptrData[index] = moptrData[index + 1];
+	}
+
+	mSize--;
+
+	return item;
 }
 
 template<typename Type>
