@@ -35,5 +35,8 @@ int main()
 		std::cout << intArray[index] << " ";
 	}
 
+	std::cout << "\n" << intArray.FindNumber(15) << "\n";
+	std::cout << "\n" << intArray.FindNumber(14) << "\n";
+
 	return 0;
 }

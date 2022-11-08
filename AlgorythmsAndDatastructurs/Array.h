@@ -9,6 +9,10 @@
 //============================================================================
 
 #include <cassert>
+#include <concepts>
+
+template<typename Type>
+concept IsNumeric = std::integral<Type> || std::floating_point<Type>;
 
 template<typename Type>
 class Array
@@ -34,6 +38,13 @@ public:
 	// functions to remove or insert items from everywere
 	void Insert(Type item, size_t place);
 	Type Remove(size_t place);
+
+	// function to find a number in the array
+	long long FindNumber(Type item) const requires IsNumeric<Type>;
+
+	// find any item in the array not very efficient O(n)
+	// TODO: learn more efficient search techniques
+	long long FindItem(Type item) const;
 private:
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
@@ -125,6 +136,43 @@ inline Type Array<Type>::Remove(size_t place)
 	mSize--;
 
 	return item;
+}
+
+template<typename Type>
+inline long long Array<Type>::FindNumber(Type item) const requires IsNumeric<Type>
+{
+	size_t low = 0, high = mSize, mid;
+
+	while (low <= high)
+	{
+		mid = (low + high) / 2;
+		if (item == moptrData[mid]) // found
+		{
+			return mid;
+		}
+		else if (item < moptrData[mid]) // half the array to reduce the space
+		{
+			high = mid - 1; // in this case in zero direction
+		}
+		else
+		{
+			low = mid + 1; // in this case in maximum size direction
+		}
+	}
+	return -1;
+}
+
+template<typename Type>
+inline long long Array<Type>::FindItem(Type item) const
+{
+	for (size_t index = 0; index < mSize; index++)
+	{
+		if (moptrData[index] == item)
+		{
+			return index;
+		}
+	}
+	return -1;
 }
 
 template<typename Type>
