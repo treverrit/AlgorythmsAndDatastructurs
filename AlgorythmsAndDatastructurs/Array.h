@@ -46,6 +46,7 @@ public:
 	// TODO: learn more efficient search techniques
 	long long FindItem(Type item) const;
 private:
+	bool IsSorted(Type*) const requires IsNumeric<Type>;
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
 
@@ -59,30 +60,21 @@ template<typename Type>
 inline const Type Array<Type>::operator[](size_t index) const
 {
 	assert(index < mSize); 
-	if (index < mSize)
-	{
-		return moptrData[index];
-	}
+	if (index < mSize) { return moptrData[index]; }
 }
 
 template<typename Type>
 inline Type& Array<Type>::operator[](size_t index)
 {
 	assert(index < mSize);
-	if (index < mSize) 
-	{ 
-		return moptrData[index]; 
-	}
+	if (index < mSize) { return moptrData[index]; }
 }
 
 template<typename Type>
 inline void Array<Type>::Append(Type item)
 {
 	// if the array is full make the array bigger
-	if (mSize == mCapacity) 
-	{ 
-		Resize(mCapacity * 2); 
-	}
+	if (mSize == mCapacity)  { Resize(mCapacity * 2); }
 	moptrData[mSize] = item;
 	mSize++;
 }
@@ -91,10 +83,7 @@ template<typename Type>
 inline Type Array<Type>::Pop()
 {
 	// if the size is to small make the array smaller
-	if (mSize < (mCapacity / 4)) 
-	{ 
-		Resize(mCapacity / 2); 
-	}
+	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
 	mSize--;
 	return moptrData[mSize];
 }
@@ -103,10 +92,7 @@ template<typename Type>
 inline void Array<Type>::Insert(Type item, size_t place)
 {
 	// if the array is full make the array bigger
-	if (mSize == mCapacity)
-	{
-		Resize(mCapacity * 2);
-	}
+	if (mSize == mCapacity) { Resize(mCapacity * 2); }
 
 	for (size_t index = mSize; index > place; index--)
 	{
@@ -121,10 +107,7 @@ template<typename Type>
 inline Type Array<Type>::Remove(size_t place)
 {
 	// if the size is to small make the array smaller
-	if (mSize < (mCapacity / 4)) 
-	{
-		Resize(mCapacity / 2);
-	}
+	if (mSize < (mCapacity / 4)) { Resize(mCapacity / 2); }
 
 	Type item = moptrData[place];
 
@@ -142,6 +125,8 @@ template<typename Type>
 inline long long Array<Type>::FindNumber(Type item) const requires IsNumeric<Type>
 {
 	size_t low = 0, high = mSize, mid;
+
+	if (!IsSorted(moptrData)) { return FindItem(item); }
 
 	while (low <= high)
 	{
@@ -167,12 +152,19 @@ inline long long Array<Type>::FindItem(Type item) const
 {
 	for (size_t index = 0; index < mSize; index++)
 	{
-		if (moptrData[index] == item)
-		{
-			return index;
-		}
+		if (moptrData[index] == item) { return index; }
 	}
 	return -1;
+}
+
+template<typename Type>
+inline bool Array<Type>::IsSorted(Type*) const requires IsNumeric<Type>
+{
+	for (size_t index = 0; index < mSize - 1; index++)
+	{
+		if (moptrData[index] > moptrData[index + 1]) { return false; }
+	}
+	return true;
 }
 
 template<typename Type>
