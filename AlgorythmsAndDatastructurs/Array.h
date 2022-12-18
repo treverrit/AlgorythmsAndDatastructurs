@@ -45,6 +45,15 @@ public:
 	// find any item in the array not very efficient O(n)
 	// TODO: learn more efficient search techniques
 	long long FindItem(Type item) const;
+
+	// some stat functions
+	Type Sum() const requires IsNumeric<Type>;
+	double Average() const requires IsNumeric<Type>;
+	double Median() const requires IsNumeric<Type>;
+
+	// some functions to insert an another array
+	void Concat(Array& other);
+	void Merge(Array& other);
 private:
 	bool IsSorted(Type*) const requires IsNumeric<Type>;
 	// resize the array because it is a dynamic array
@@ -155,6 +164,83 @@ inline long long Array<Type>::FindItem(Type item) const
 		if (moptrData[index] == item) { return index; }
 	}
 	return -1;
+}
+
+template<typename Type>
+inline Type Array<Type>::Sum() const requires IsNumeric<Type>
+{
+	Type sum = 0;
+
+	for (size_t index = 0; index < mSize; index++) { sum += moptrData[index]; }
+
+	return sum;
+}
+
+template<typename Type>
+inline double Array<Type>::Average() const requires IsNumeric<Type>
+{
+	return sum() / (mSize * 1.0);
+}
+
+template<typename Type>
+inline double Array<Type>::Median() const requires IsNumeric<Type>
+{
+	if (IsSorted(moptrData))
+	{
+		return mSize % 2 == 0 ? moptrData[mSize / 2] :
+			   (moptrData[mSize / 2] + moptrData[mSize / 2 + 1]) / 2;
+	}
+
+	return 0.0;
+}
+
+template<typename Type>
+inline void Array<Type>::Concat(Array& other)
+{
+	size_t newSize = mSize + other.mSize;
+	Type* noptrNewArray = new Type[newSize];
+
+	for (size_t index = 0; index < mSize; ++index) // insert  the initial array in the new
+	{
+		noptrNewArray[index] = moptrData[index];
+	}
+
+	for (size_t index = mSize; index < newSize; ++index) // insert the other in the new
+	{
+		noptrNewArray[index] = other.moptrData[index - mSize];
+	}
+
+	// set the initial array to the new
+	delete[] moptrData; 
+	moptrData = noptrNewArray;
+	mSize = newSize;
+	mCapacity = newSize;
+}
+
+template<typename Type>
+inline void Array<Type>::Merge(Array& other)
+{
+	if (IsSorted(moptrData) && IsSorted(other.moptrData))
+	{
+		size_t newSize = mSize + other.mSize;
+		Type* noptrNewArray = new Type[newSize];
+
+		size_t i = 0, j = 0, k = 0;
+
+		while (i < mSize && j < other.mSize)  
+		{
+			if (moptrData[i] < other.moptrData[j]) { noptrNewArray[k++] = moptrData[i++]; }
+			else { noptrNewArray[k++] = other.moptrData[j++]; }
+		}
+
+		for (; i < mSize; i++) { noptrNewArray[k++] = moptrData[i]; }
+		for (; j < other.mSize; i++) { noptrNewArray[k++] = other.moptrData[j++]; }
+
+		delete[] moptrData;
+		moptrData = noptrNewArray;
+		mSize = newSize;
+		mCapacity = newSize;
+	}
 }
 
 template<typename Type>
