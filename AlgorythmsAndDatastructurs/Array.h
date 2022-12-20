@@ -22,11 +22,22 @@ public:
 	Array() noexcept : mSize(0), mCapacity(1), moptrData(new Type) {}
 	Array(size_t capacity) noexcept : mSize(0), mCapacity(capacity), moptrData(new Type[mCapacity]) {}
 
+	// copy constructors
+	Array(const Array& other) noexcept : mSize(other.mSize), mCapacity(other.mCapacity), moptrData(other.moptrData) {}
+	Array& operator = (const Array& other) noexcept;
+
+	// move constructors
+	Array(Array&& other) noexcept;
+	Array& operator = (Array&& other) noexcept;
+
 	// destructor
 	~Array() noexcept { delete[] moptrData; moptrData = nullptr; }
 
-	inline size_t Size() const { return mSize; }
+	inline size_t Size() const { return mSize; };
 
+	// comparison operators
+	bool operator == (const Array& other) const;
+	bool operator != (const Type& other) const;
 	// access operators
 	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
@@ -52,18 +63,64 @@ public:
 	double Median() const requires IsNumeric<Type>;
 
 	// some functions to insert an another array
-	void Concat(Array& other);
-	void Merge(Array& other);
+	void Concat(const Array& other);
+	void Merge(const Array& other);
+	Array Concat(const Array& other) const;
+	Array Merge(const Array& other) const;
+
+	// function to reverse an array
+	void Reverse();
+
+	// function for display
+	void Show();
+
+	// function for checking if sorted
+	inline bool IsSorted() const { return IsSorted(moptrData); }
 private:
 	bool IsSorted(Type*) const requires IsNumeric<Type>;
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
 
+	void CopyArray(const Array& other);
+
+	void Swap(Type& x, Type& y);
 private:
 	size_t mSize;
 	size_t mCapacity;
 	Type* moptrData;
 };
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator=(const Array& other) noexcept
+{
+	if (*this == other)
+	{
+		return *this;
+	}
+	if (moptrData)
+	{
+		delete[] moptrData;
+		mSize = 0;
+		mCapacity = 0;
+		CopyArray();
+	}
+}
+
+template<typename Type>
+inline bool Array<Type>::operator==(const Array& other) const
+{
+	for (size_t index = 0; index < mSize; index++)
+	{
+		if (moptrData[index] != other.moptrData[index]) { return false; }
+	}
+	return true;
+}
+
+template<typename Type>
+inline bool Array<Type>::operator!=(const Type& other) const
+{
+	return !(*this == other);
+}
 
 template<typename Type>
 inline const Type Array<Type>::operator[](size_t index) const
@@ -179,7 +236,7 @@ inline Type Array<Type>::Sum() const requires IsNumeric<Type>
 template<typename Type>
 inline double Array<Type>::Average() const requires IsNumeric<Type>
 {
-	return sum() / (mSize * 1.0);
+	return Sum() / (mSize * 1.0);
 }
 
 template<typename Type>
@@ -195,7 +252,7 @@ inline double Array<Type>::Median() const requires IsNumeric<Type>
 }
 
 template<typename Type>
-inline void Array<Type>::Concat(Array& other)
+inline void Array<Type>::Concat(const Array& other)
 {
 	size_t newSize = mSize + other.mSize;
 	Type* noptrNewArray = new Type[newSize];
@@ -218,7 +275,7 @@ inline void Array<Type>::Concat(Array& other)
 }
 
 template<typename Type>
-inline void Array<Type>::Merge(Array& other)
+inline void Array<Type>::Merge(const Array& other)
 {
 	if (IsSorted(moptrData) && IsSorted(other.moptrData))
 	{
@@ -241,6 +298,26 @@ inline void Array<Type>::Merge(Array& other)
 		mSize = newSize;
 		mCapacity = newSize;
 	}
+}
+
+template<typename Type>
+inline void Array<Type>::Reverse()
+{
+	for (size_t i = 0, j = mSize - 1; i < j; i++, j--)
+	{
+		Swap(moptrData[i], moptrData[j]);
+	}
+}
+
+template<typename Type>
+inline void Array<Type>::Show()
+{
+	std::cout << "[ ";
+	for (size_t index = 0; index < mSize; index++)
+	{
+		std::cout << moptrData[index] << ((index < mSize - 1) ? ", " : " ]");
+	}
+	std::cout << std::endl;
 }
 
 template<typename Type>
@@ -267,4 +344,27 @@ inline void Array<Type>::Resize(size_t newCapacity)
 	delete[] moptrData;
 	moptrData = noptrNewData;
 	mCapacity = newCapacity;
+}
+
+template<typename Type>
+inline void Array<Type>::CopyArray(const Array& other)
+{
+	Type* noptrNewArray = new Type[other.mSize];
+
+	for (size_t index = 0; index < other.mSize; index++)
+	{
+		noptrNewArray[index] = other.moptrData[index];
+	}
+
+	moptrData = noptrNewArray;
+	mSize = other.mSize;
+	mCapacity = other.mCapacity;
+}
+
+template<typename Type>
+inline void Array<Type>::Swap(Type& x, Type& y)
+{
+	Type temp = x;
+	x = y;
+	y = temp;
 }
