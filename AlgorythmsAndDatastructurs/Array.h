@@ -104,6 +104,8 @@ inline Array<Type>& Array<Type>::operator=(const Array& other) noexcept
 		mCapacity = 0;
 		CopyArray();
 	}
+
+	return *this;
 }
 
 template<typename Type>
