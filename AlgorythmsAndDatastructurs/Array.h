@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <concepts>
+#include <utility>
 
 template<typename Type>
 concept IsNumeric = std::integral<Type> || std::floating_point<Type>;
@@ -106,6 +107,31 @@ inline Array<Type>& Array<Type>::operator=(const Array& other) noexcept
 	}
 
 	return *this;
+}
+
+template<typename Type>
+inline Array<Type>::Array(Array&& other) noexcept
+	: mSize(other.mSize)
+	, mCapacity(other.mCapacity)
+	, moptrData(other.moptrData)
+{
+	other.mSize = 0;
+	other.mCapacity = 0;
+	other.moptrData = nullptr;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator=(Array&& other) noexcept
+{
+	delete[] moptrData;
+
+	mSize = other.mSize;
+	mCapacity = other.mCapacity;
+	moptrData = other.moptrData;
+
+	other.mSize = 0;
+	other.mCapacity = 0;
+	other.moptrData = nullptr;
 }
 
 template<typename Type>
