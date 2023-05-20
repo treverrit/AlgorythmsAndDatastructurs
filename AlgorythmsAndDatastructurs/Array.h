@@ -11,9 +11,12 @@
 #include <cassert>
 #include <concepts>
 #include <utility>
+#include <iostream>
 
 template<typename Type>
 concept IsNumeric = std::integral<Type> || std::floating_point<Type>;
+
+enum class SortPriority{OBJECTS, SMALL_NUMBERS, BIG_NUMBERS};
 
 template<typename Type>
 class Array
@@ -35,11 +38,23 @@ public:
 	~Array() noexcept { delete[] moptrData; moptrData = nullptr; }
 
 	inline size_t Size() const { return mSize; };
+	inline size_t Capacity() const { return mCapacity; }
 
 	// comparison operators
 	bool operator == (const Array& other) const;
-	bool operator != (const Type& other) const;
+	bool operator != (const Array& other) const;
 	// access operators
+
+	Array operator + (const Array& other) const requires IsNumeric<Type>;
+	Array operator - (const Array& other) const requires IsNumeric<Type>;
+	Array& operator += (const Array& other) requires IsNumeric<Type>;
+	Array& operator -= (const Array& other) requires IsNumeric<Type>;
+
+	Array operator * (const Type& scalar) const requires IsNumeric<Type>;
+	Array operator / (const Type& scalar) const requires IsNumeric<Type>;
+	Array& operator *= (const Type& scalar) requires IsNumeric<Type>;
+	Array& operator /= (const Type& scalar) requires IsNumeric<Type>;
+
 	const Type operator [] (size_t index) const;
 	Type& operator [] (size_t index);
 
@@ -66,8 +81,8 @@ public:
 	// some functions to insert an another array
 	void Concat(const Array& other);
 	void Merge(const Array& other);
-	Array Concat(const Array& other) const;
-	Array Merge(const Array& other) const;
+	Array& Concat(const Array& other) const;
+	Array& Merge(const Array& other) const;
 
 	// function to reverse an array
 	void Reverse();
@@ -75,9 +90,16 @@ public:
 	// function for display
 	void Show();
 
+	void Sort(SortPriority = SortPriority::OBJECTS);
+
 	// function for checking if sorted
 	inline bool IsSorted() const { return IsSorted(moptrData); }
 private:
+	void InsertionSort();
+	void MergeSort();
+	void RadixSort();
+	void CountSort();
+
 	bool IsSorted(Type*) const requires IsNumeric<Type>;
 	// resize the array because it is a dynamic array
 	void Resize(size_t newCapacity);
@@ -123,20 +145,26 @@ inline Array<Type>::Array(Array&& other) noexcept
 template<typename Type>
 inline Array<Type>& Array<Type>::operator=(Array&& other) noexcept
 {
-	delete[] moptrData;
+	if (*this != other)
+	{
+		delete[] moptrData;
 
-	mSize = other.mSize;
-	mCapacity = other.mCapacity;
-	moptrData = other.moptrData;
+		moptrData = other.moptrData;
+		mSize = other.mSize;
+		mCapacity = other.mCapacity;
 
-	other.mSize = 0;
-	other.mCapacity = 0;
-	other.moptrData = nullptr;
+		other.moptrData = nullptr;
+		other.mSize = 0;
+		other.mCapacity = 0;
+	}
+
+	return *this;
 }
 
 template<typename Type>
 inline bool Array<Type>::operator==(const Array& other) const
 {
+	if (mSize != other.mSize) { return false; }
 	for (size_t index = 0; index < mSize; index++)
 	{
 		if (moptrData[index] != other.moptrData[index]) { return false; }
@@ -145,9 +173,88 @@ inline bool Array<Type>::operator==(const Array& other) const
 }
 
 template<typename Type>
-inline bool Array<Type>::operator!=(const Type& other) const
+inline bool Array<Type>::operator!=(const Array& other) const
 {
 	return !(*this == other);
+}
+
+template<typename Type>
+inline Array<Type> Array<Type>::operator+(const Array& other) const requires IsNumeric<Type>
+{
+	Array<Type> thisVec = *this;
+
+	for (size_t index = 0; index < mSize; ++index)
+	{
+		thisVec[index] = thisVec[index] + other[index];
+	}
+
+	return thisVec;
+}
+
+template<typename Type>
+inline Array<Type> Array<Type>::operator-(const Array& other) const requires IsNumeric<Type>
+{
+	Array<Type> thisVec = *this;
+
+	for (size_t index = 0; index < mSize; ++index)
+	{
+		thisVec[index] = thisVec[index] - other[index];
+	}
+	return thisVec;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator+=(const Array& other) requires IsNumeric<Type>
+{
+	*this = *this + other;
+	return *this;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator-=(const Array& other) requires IsNumeric<Type>
+{
+	*this = *this + other;
+	return *this;
+}
+
+template<typename Type>
+inline Array<Type> Array<Type>::operator*(const Type& scalar) const requires IsNumeric<Type>
+{
+	Array<Type> thisVec = *this;
+
+	for (size_t index = 0; index < mSize; ++index)
+	{
+		thisVec[index] = thisVec[index] * scalar;
+	}
+
+	return thisVec;
+}
+
+template<typename Type>
+inline Array<Type> Array<Type>::operator/(const Type& scalar) const requires IsNumeric<Type>
+{
+	Array<Type> thisVec = *this;
+
+	for (size_t index = 0; index < mSize; ++index)
+	{
+		thisVec[index] = thisVec[index] / scalar;
+	}
+
+	return thisVec;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator*=(const Type& scalar) requires IsNumeric<Type>
+{
+	*this = *this * scalar;
+	return *this;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::operator/=(const Type& scalar) requires IsNumeric<Type>
+{
+	*this = *this / scalar;
+	return *this;
 }
 
 template<typename Type>
@@ -319,13 +426,55 @@ inline void Array<Type>::Merge(const Array& other)
 		}
 
 		for (; i < mSize; i++) { noptrNewArray[k++] = moptrData[i]; }
-		for (; j < other.mSize; i++) { noptrNewArray[k++] = other.moptrData[j++]; }
+		for (; j < other.mSize; j++) { noptrNewArray[k++] = other.moptrData[j]; }
 
 		delete[] moptrData;
 		moptrData = noptrNewArray;
 		mSize = newSize;
 		mCapacity = newSize;
 	}
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::Concat(const Array& other) const
+{
+	size_t newSize = mSize + other.mSize;
+	Array<Type>newArray = Array<Type>(newSize);
+
+	for (size_t index = 0; index < mSize; ++index)
+	{
+		newArray.Append(moptrData[index]);
+	}
+
+	for (size_t index = mSize; index < newSize; ++index)
+	{
+		newArray.Append(moptrData[index]);
+	}
+
+	return newArray;
+}
+
+template<typename Type>
+inline Array<Type>& Array<Type>::Merge(const Array& other) const
+{
+	size_t newSize = mSize + other.mSize;
+	Array<Type> newArray = Array<Type>(newSize);
+
+	if (IsSorted() && other.IsSorted())
+	{
+		size_t i = 0, j = 0;
+
+		while (i < mSize && j < other.mSize)
+		{
+			if (moptrData[i] < other.moptrData[j]) { newArray.Append(moptrData[i++]); }
+			else { newArray.Append(moptrData[j++]); }
+		}
+
+		for (; i < mSize; i++) { newArray.Append(moptrData[i]); }
+		for (; j < other.mSize; j++) { newArray.Append(other.moptrData[j]); }
+	}
+
+	return newArray;
 }
 
 template<typename Type>
@@ -346,6 +495,46 @@ inline void Array<Type>::Show()
 		std::cout << moptrData[index] << ((index < mSize - 1) ? ", " : " ]");
 	}
 	std::cout << std::endl;
+}
+
+template<typename Type>
+inline void Array<Type>::Sort(SortPriority priority)
+{
+	if (priority == SortPriority::OBJECTS)
+	{
+		if (mSize < 1000) { InsertionSort(); }
+		else { MergeSort(); }
+	}
+	else
+	{
+		if (mSize < 1000) { InsertionSort(); }
+		else if (mSize < 25000) { MergeSort(); }
+		else
+		{
+			if (priority == SortPriority::SMALL_NUMBERS) { CountSort(); }
+			else { RadixSort(); }
+		}
+	}
+}
+
+template<typename Type>
+inline void Array<Type>::InsertionSort()
+{
+}
+
+template<typename Type>
+inline void Array<Type>::MergeSort()
+{
+}
+
+template<typename Type>
+inline void Array<Type>::RadixSort()
+{
+}
+
+template<typename Type>
+inline void Array<Type>::CountSort()
+{
 }
 
 template<typename Type>
