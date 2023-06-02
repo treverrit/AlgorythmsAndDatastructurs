@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Array.h"
+#include <cstdlib>
+#include <time.h>
 
 namespace ArrayUtils {
 	void Test();

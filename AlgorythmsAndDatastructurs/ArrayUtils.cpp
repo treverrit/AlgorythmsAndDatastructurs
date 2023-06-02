@@ -89,7 +89,19 @@ void ArrayUtils::RemoveTest()
 
 void ArrayUtils::FindNumberTest()
 {
-	return;
+	Array<int>intArray{};
+
+	for (size_t index = 0; index < 40; ++index) {
+		int item = rand() % 100;
+		intArray.Append(item);
+	}
+
+	intArray.Sort();
+	std::cout << ((intArray.IsSorted()) ? "true" : "false") << std::endl;
+	intArray.Show();
+	int numberToFind = rand() % 100;
+	std::cout << numberToFind << std::endl;
+	std::cout << intArray.FindNumber(numberToFind) << std::endl;
 }
 
 void ArrayUtils::FindItemTest()
@@ -119,5 +131,14 @@ void ArrayUtils::ReverseTest()
 
 void ArrayUtils::SortTest()
 {
-	return;
+	Array<int>intArray{};
+
+	for (size_t index = 0; index < 30; ++index)
+	{
+		intArray.Append(rand() % 250);
+	}
+
+	intArray.Show();
+	intArray.Sort();
+	intArray.Show();
 }

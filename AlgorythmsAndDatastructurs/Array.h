@@ -16,8 +16,6 @@
 template<typename Type>
 concept IsNumeric = std::integral<Type> || std::floating_point<Type>;
 
-enum class SortPriority{OBJECTS, SMALL_NUMBERS, BIG_NUMBERS};
-
 template<typename Type>
 class Array
 {
@@ -90,7 +88,7 @@ public:
 	// function for display
 	void Show();
 
-	void Sort(SortPriority = SortPriority::OBJECTS);
+	void Sort();
 
 	// function for checking if sorted
 	inline bool IsSorted() const { return IsSorted(moptrData); }
@@ -498,28 +496,27 @@ inline void Array<Type>::Show()
 }
 
 template<typename Type>
-inline void Array<Type>::Sort(SortPriority priority)
+inline void Array<Type>::Sort()
 {
-	if (priority == SortPriority::OBJECTS)
-	{
-		if (mSize < 1000) { InsertionSort(); }
-		else { MergeSort(); }
-	}
-	else
-	{
-		if (mSize < 1000) { InsertionSort(); }
-		else if (mSize < 25000) { MergeSort(); }
-		else
-		{
-			if (priority == SortPriority::SMALL_NUMBERS) { CountSort(); }
-			else { RadixSort(); }
-		}
-	}
+	InsertionSort();
 }
 
 template<typename Type>
 inline void Array<Type>::InsertionSort()
 {
+	for (size_t index = 1; index < mSize; ++index)
+	{
+		size_t shifterIndex = index - 1;
+		Type item = moptrData[index];
+
+		while (shifterIndex >= 0 && moptrData[shifterIndex] > item)
+		{
+			moptrData[shifterIndex + 1] = moptrData[shifterIndex];
+			shifterIndex-=1;
+		}
+
+		moptrData[shifterIndex + 1] = item;
+	}
 }
 
 template<typename Type>
