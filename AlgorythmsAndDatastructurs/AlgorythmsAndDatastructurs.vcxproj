@@ -130,9 +130,12 @@
   <ItemGroup>
     <ClInclude Include="Array.h" />
     <ClInclude Include="ArrayUtils.h" />
+    <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="LinkedListUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArrayUtils.cpp" />
+    <ClCompile Include="LinkedListUtils.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
