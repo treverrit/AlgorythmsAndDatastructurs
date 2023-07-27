@@ -323,7 +323,7 @@ inline Type Array<Type>::Remove(size_t place)
 template<typename Type>
 inline long long Array<Type>::FindNumber(Type item) const requires IsNumeric<Type>
 {
-	size_t low = 0, high = mSize, mid;
+	size_t low = 0, high = mSize - 1, mid;
 
 	if (!IsSorted(moptrData)) { return FindItem(item); }
 

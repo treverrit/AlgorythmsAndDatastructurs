@@ -5,3 +5,5 @@
 void LinkedListTest();
 void CreateLinkedList();
 void AppendOnLinkedList();
+void MakeLinkedListUnique();
+void ReverseLinkedList();

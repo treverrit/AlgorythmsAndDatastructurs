@@ -20,6 +20,8 @@ public:
 
 	void Append(Type item);
 	void Show() const;
+	void Makeunique();
+	void Reverse();
 private:
 	Node* moptrFirstNode;
 	Node* moptrLastNode;
@@ -88,4 +90,42 @@ inline void LinkedList<Type>::Show() const
 	}
 
 	std::cout << "]" << std::endl;
+}
+
+template<typename Type>
+inline void LinkedList<Type>::Makeunique()
+{
+	Node* temp = moptrFirstNode->next;
+	Node* current = moptrFirstNode;
+
+	while (temp)
+	{
+		if (temp->data != current->data)
+		{
+			current = temp;
+			temp = temp->next;
+		}
+		else
+		{
+			current->next = temp->next;
+			delete temp;
+			temp = current->next;
+		}
+	}
+}
+
+template<typename Type>
+inline void LinkedList<Type>::Reverse()
+{
+	Node* q = nullptr, *r = nullptr;
+	Node* p = moptrFirstNode;
+
+	while (p)
+	{
+		r = q;
+		q = p;
+		p = p->next;
+		q->next = r;
+	}
+	moptrFirstNode = q;
 }
