@@ -6,6 +6,8 @@ void LinkedListTest()
 	AppendOnLinkedList();
 	MakeLinkedListUnique();
 	ReverseLinkedList();
+	ConcatLinkedLists();
+	MergeLinkedList();
 }
 
 void CreateLinkedList()
@@ -64,4 +66,45 @@ void ReverseLinkedList()
 	list.Reverse();
 
 	list.Show();
+}
+
+void ConcatLinkedLists()
+{
+	LinkedList<int>list{};
+	LinkedList<int>list2{};
+
+	for (size_t index = 0; index < 11; ++index)
+	{
+		list.Append(static_cast<int>(index) + 2);
+		list2.Append(static_cast<int>(index) * 2);
+	}
+
+	list.Show();
+	list2.Show();
+
+	list.Concat(list2);
+
+	list.Show();
+}
+
+void MergeLinkedList()
+{
+	LinkedList<int>list{};
+	LinkedList<int>list2{};
+
+	for (size_t index = 0; index < 11; ++index)
+	{
+		list.Append(static_cast<int>(index) + 2);
+		list2.Append(static_cast<int>(index) * 2);
+	}
+
+	list.Show();
+	list2.Show();
+
+	list.Merge(list2);
+
+	list.Show();
+
+	std::cout << list.First() << std::endl;
+	std::cout << list.Last() << std::endl;
 }

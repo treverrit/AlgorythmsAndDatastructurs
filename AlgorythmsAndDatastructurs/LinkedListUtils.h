@@ -7,3 +7,5 @@ void CreateLinkedList();
 void AppendOnLinkedList();
 void MakeLinkedListUnique();
 void ReverseLinkedList();
+void ConcatLinkedLists();
+void MergeLinkedList();
