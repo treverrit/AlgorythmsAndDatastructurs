@@ -35,6 +35,10 @@ public:
 
 	inline const Type First() const { return moptrFirstNode->data; }
 	inline const Type Last() const { return moptrLastNode->data; }
+	inline Node* FirstNode() const { return moptrFirstNode; }
+	inline Node* LastNode() const { return moptrLastNode; }
+
+	bool HasLoop() const;
 private:
 	void DeleteLinkedList();
 	void CopyLinkedList(const LinkedList& other);
@@ -270,6 +274,22 @@ inline void LinkedList<Type>::Merge(LinkedList& other)
 	}
 
 	other.moptrFirstNode = nullptr;
+}
+
+template<typename Type>
+inline bool LinkedList<Type>::HasLoop() const
+{
+	Node* fast = moptrFirstNode;
+	Node* slow = moptrFirstNode;
+
+	do
+	{
+		slow = slow->next;
+		fast = fast->next;
+		fast = fast ? fast->next : fast;
+	} while (fast && slow && fast != slow);
+
+	return fast && slow;
 }
 
 template<typename Type>

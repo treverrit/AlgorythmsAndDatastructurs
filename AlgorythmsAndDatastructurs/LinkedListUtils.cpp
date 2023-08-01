@@ -8,6 +8,7 @@ void LinkedListTest()
 	ReverseLinkedList();
 	ConcatLinkedLists();
 	MergeLinkedList();
+	CheckLinkedListForLoop();
 }
 
 void CreateLinkedList()
@@ -107,4 +108,24 @@ void MergeLinkedList()
 
 	std::cout << list.First() << std::endl;
 	std::cout << list.Last() << std::endl;
+}
+
+void CheckLinkedListForLoop()
+{
+	LinkedList<int>list{};
+
+	for (size_t index = 0; index <= 20; ++index)
+	{
+		list.Append(static_cast<int>(index));
+	}
+
+	LinkedList<int>::Node* t1 = list.FirstNode()->next->next->next;
+	LinkedList<int>::Node* t2 = list.LastNode();
+	t2->next = t1;
+
+	std::cout << ((list.HasLoop()) ? "List has a loop" : "List has not a loop") << std::endl;
+
+	t2->next = nullptr;
+
+	std::cout << ((list.HasLoop()) ? "List has a loop" : "List has not a loop") << std::endl;
 }

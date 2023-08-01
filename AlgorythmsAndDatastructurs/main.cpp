@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Array.h"
 #include "ArrayUtils.h"
-#include "LinkedListUtils.h";
+#include "LinkedListUtils.h"
 
 constexpr size_t ARRAY_SIZE = 20;
 

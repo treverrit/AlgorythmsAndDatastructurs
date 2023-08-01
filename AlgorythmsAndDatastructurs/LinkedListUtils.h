@@ -9,3 +9,4 @@ void MakeLinkedListUnique();
 void ReverseLinkedList();
 void ConcatLinkedLists();
 void MergeLinkedList();
+void CheckLinkedListForLoop();
