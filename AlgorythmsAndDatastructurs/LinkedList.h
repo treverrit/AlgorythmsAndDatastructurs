@@ -26,12 +26,16 @@ public:
 	const bool operator == (const LinkedList& other) const;
 	const bool operator != (const LinkedList& other) const;
 
+	const bool IsSorted() const;
+
 	void Append(Type item);
 	void Show() const;
 	void Makeunique();
 	void Reverse();
 	void Concat(LinkedList& other);
 	void Merge(LinkedList& other);
+
+	void Sort();
 
 	inline const Type First() const { return moptrFirstNode->data; }
 	inline const Type Last() const { return moptrLastNode->data; }
@@ -135,6 +139,20 @@ inline const bool LinkedList<Type>::operator!=(const LinkedList& other) const
 }
 
 template<typename Type>
+inline const bool LinkedList<Type>::IsSorted() const
+{
+	Node* thisNode = moptrFirstNode;
+
+	while (thisNode)
+	{
+		if (thisNode > thisNode->next) { return false; }
+		thisNode = thisNode->next;
+	}
+
+	return true;
+}
+
+template<typename Type>
 inline void LinkedList<Type>::Append(Type item)
 {
 	if (moptrFirstNode)
@@ -224,56 +242,59 @@ inline void LinkedList<Type>::Concat(LinkedList& other)
 template<typename Type>
 inline void LinkedList<Type>::Merge(LinkedList& other)
 {
-	Node* thisNode = moptrFirstNode;
-	Node* otherNode = other.moptrFirstNode;
-	Node* iterationNode;
-	Node* mergeNode;
+	if (IsSorted() && other.IsSorted())
+	{
+		Node* thisNode = moptrFirstNode;
+		Node* otherNode = other.moptrFirstNode;
+		Node* iterationNode;
+		Node* mergeNode;
 
-	if (thisNode->data < otherNode->data)
-	{
-		mergeNode = iterationNode = thisNode;
-		thisNode = thisNode->next;
-		mergeNode->next = nullptr;
-	}
-	else
-	{
-		mergeNode = iterationNode = otherNode;
-		otherNode = otherNode->next;
-		mergeNode->next = nullptr;
-	}
-
-	while (thisNode && otherNode)
-	{
 		if (thisNode->data < otherNode->data)
 		{
-			iterationNode->next = thisNode;
-			iterationNode = thisNode;
+			mergeNode = iterationNode = thisNode;
 			thisNode = thisNode->next;
-			iterationNode->next = nullptr;
+			mergeNode->next = nullptr;
 		}
 		else
 		{
-			iterationNode->next = otherNode;
-			iterationNode = otherNode;
+			mergeNode = iterationNode = otherNode;
 			otherNode = otherNode->next;
-			iterationNode->next = nullptr;
+			mergeNode->next = nullptr;
 		}
-	}
 
-	if (thisNode) 
-	{ 
-		iterationNode->next = thisNode;
-		moptrFirstNode = mergeNode;
-	}
+		while (thisNode && otherNode)
+		{
+			if (thisNode->data < otherNode->data)
+			{
+				iterationNode->next = thisNode;
+				iterationNode = thisNode;
+				thisNode = thisNode->next;
+				iterationNode->next = nullptr;
+			}
+			else
+			{
+				iterationNode->next = otherNode;
+				iterationNode = otherNode;
+				otherNode = otherNode->next;
+				iterationNode->next = nullptr;
+			}
+		}
 
-	if (otherNode) 
-	{ 
-		iterationNode->next = otherNode;
-		moptrFirstNode = mergeNode;
-		moptrLastNode = other.moptrLastNode;
-	}
+		if (thisNode)
+		{
+			iterationNode->next = thisNode;
+			moptrFirstNode = mergeNode;
+		}
 
-	other.moptrFirstNode = nullptr;
+		if (otherNode)
+		{
+			iterationNode->next = otherNode;
+			moptrFirstNode = mergeNode;
+			moptrLastNode = other.moptrLastNode;
+		}
+
+		other.moptrFirstNode = nullptr;
+	}
 }
 
 template<typename Type>

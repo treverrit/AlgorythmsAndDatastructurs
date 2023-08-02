@@ -94,9 +94,11 @@ public:
 	inline bool IsSorted() const { return IsSorted(moptrData); }
 private:
 	void InsertionSort();
-	void MergeSort();
+	void MergeSort(size_t low, size_t high);
 	void RadixSort();
 	void CountSort();
+
+	void Merge(size_t low, size_t mid, size_t high);
 
 	bool IsSorted(Type*) const requires IsNumeric<Type>;
 	// resize the array because it is a dynamic array
@@ -498,7 +500,8 @@ inline void Array<Type>::Show()
 template<typename Type>
 inline void Array<Type>::Sort()
 {
-	InsertionSort();
+	if (mSize < 100) { InsertionSort(); }
+	else { MergeSort(0, mSize - 1); }
 }
 
 template<typename Type>
@@ -520,8 +523,17 @@ inline void Array<Type>::InsertionSort()
 }
 
 template<typename Type>
-inline void Array<Type>::MergeSort()
+inline void Array<Type>::MergeSort(size_t low, size_t high)
 {
+	size_t mid;
+
+	if (low < high)
+	{
+		mid = (low + high) / 2;
+		MergeSort(low, mid);
+		MergeSort(mid + 1, high);
+		Merge(low, mid, high);
+	}
 }
 
 template<typename Type>
@@ -532,6 +544,26 @@ inline void Array<Type>::RadixSort()
 template<typename Type>
 inline void Array<Type>::CountSort()
 {
+}
+
+template<typename Type>
+inline void Array<Type>::Merge(size_t low, size_t mid, size_t high)
+{
+	size_t i = low, j = mid + 1, k = low;
+	Type* mergedArray = new Type[mCapacity];
+
+	while (i <= mid && j <= high)
+	{
+		if (moptrData[i] < moptrData[j]) { mergedArray[k++] = moptrData[i++]; }
+		else { mergedArray[k++] = moptrData[j++]; }
+	}
+
+	for (; i <= mid; i++) { mergedArray[k++] = moptrData[i]; }
+	for (; j <= high; j++) { mergedArray[k++] = moptrData[j]; }
+	for (size_t index = low; index <= high; index++) { moptrData[index] = mergedArray[index]; }
+
+	delete[] mergedArray;
+	mergedArray = nullptr;
 }
 
 template<typename Type>

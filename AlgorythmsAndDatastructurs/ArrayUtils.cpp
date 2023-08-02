@@ -121,7 +121,19 @@ void ArrayUtils::ConcatTest()
 
 void ArrayUtils::MergeTest()
 {
-	return;
+	Array<int>array1{};
+	Array<int>array2{};
+
+	for (size_t index = 0; index < 20; ++index)
+	{
+		array1.Append(static_cast<int>(index));
+		array2.Append(static_cast<int>(index));
+	}
+
+	array1.Show();
+	array2.Show();
+	array1.Merge(array2);
+	array1.Show();
 }
 
 void ArrayUtils::ReverseTest()
@@ -141,4 +153,15 @@ void ArrayUtils::SortTest()
 	intArray.Show();
 	intArray.Sort();
 	intArray.Show();
+
+	Array<int>intArray2{};
+
+	for (size_t index = 0; index < 300; ++index)
+	{
+		intArray2.Append(rand() % 250);
+	}
+
+	intArray2.Show();
+	intArray2.Sort();
+	intArray2.Show();
 }
