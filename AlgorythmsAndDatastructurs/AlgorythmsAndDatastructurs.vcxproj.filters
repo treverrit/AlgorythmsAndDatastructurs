@@ -21,12 +21,27 @@
     <ClInclude Include="ArrayUtils.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="LinkedList.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedListUtils.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagonalMatrix.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="ArrayUtils.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkedListUtils.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

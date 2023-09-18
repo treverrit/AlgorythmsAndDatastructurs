@@ -35,8 +35,6 @@ public:
 	void Concat(LinkedList& other);
 	void Merge(LinkedList& other);
 
-	void Sort();
-
 	inline const Type First() const { return moptrFirstNode->data; }
 	inline const Type Last() const { return moptrLastNode->data; }
 	inline Node* FirstNode() const { return moptrFirstNode; }
