@@ -33,6 +33,9 @@
     <ClInclude Include="DiagonalMatrix.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="LowerTriangularMatrix.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

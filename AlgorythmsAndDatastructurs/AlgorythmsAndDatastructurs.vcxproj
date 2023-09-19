@@ -134,6 +134,7 @@
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="LinkedListUtils.h" />
     <ClInclude Include="Matrix.h" />
+    <ClInclude Include="LowerTriangularMatrix.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArrayUtils.cpp" />
